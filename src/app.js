@@ -1,15 +1,26 @@
+require('dotenv').config()
 const express = require('express')
 const app = express()
-const bodyParser = require('body-parser')
+const path = require('path')
 const { checkToken } = require('./middleware')
-require('dotenv').config()
+// const fs = require('fs')
+const multer = require('multer')
+
+var storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, path.join(__dirname, '../', '/files/'))
+  },
+  filename: function (req, file, cb) {
+    const project = req.body.project
+    const now = new Date().toISOString()
+    cb(null, project + '__' + now)
+  }
+})
+const upload = multer({ storage })
 
 const PORT = process.env.PORT
 
-app.use(bodyParser.urlencoded({ extended: true }))
-app.use(bodyParser.json())
-
-app.post('/project_name/', checkToken, (req, res) => {
+app.post('/project_name/', upload.single('zip'), checkToken, (req, res) => {
   res.send({
     success: true
   })
