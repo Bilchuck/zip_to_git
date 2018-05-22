@@ -20,6 +20,7 @@ const app = express()
 // api
 app.post('/project_name/', upload.single('zip'), checkToken, updateRepoController)
 
+// start server
 app.listen(port, _ => {
   console.log(`The server is started on ${port} port!`)
 })
