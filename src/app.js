@@ -3,12 +3,20 @@ const express = require('express')
 const app = express()
 const path = require('path')
 const { checkToken } = require('./middleware')
-const fs = require('fs')
 const multer = require('multer')
-const unzip = require('unzip')
-const AdmZip = require('adm-zip')
+const {
+  gitClone,
+  emptyFolder,
+  unzip,
+  moveFiles,
+  gitFolderName,
+  gitCommit,
+  gitAdd,
+  gitPush
+} = require('./utils')
 
-const fileOutputPath = path.join(__dirname, '../output')
+const gitOutputPath = path.join(__dirname, '../git_output')
+const zipOutputPath = path.join(__dirname, '../zip_output')
 const fileInputPath = path.join(__dirname, '../inputs/')
 
 var storage = multer.diskStorage({
@@ -23,18 +31,29 @@ var storage = multer.diskStorage({
 })
 const upload = multer({ storage })
 
-const PORT = process.env.PORT
+const { PORT } = process.env
 
 app.post('/project_name/', upload.single('zip'), checkToken, (req, res) => {
-  const file = req.file
-
-  const zip = new AdmZip(file.path)
-
-  zip.extractAllTo(fileOutputPath, true)
-
-  res.send({
-    success: true
-  })
+  const unzipFolder = path.join(zipOutputPath, req.file.originalname.split('.zip')[0])
+  const gitFolder = path.join(gitOutputPath, gitFolderName(req.body.gitUrl))
+  emptyFolder(gitOutputPath)
+    .then(_ => emptyFolder(zipOutputPath))
+    .then(_ => gitClone(req.body.gitUrl, gitOutputPath))
+    .then(_ => unzip(req.file.path, zipOutputPath))
+    .then(_ => moveFiles(unzipFolder, gitFolder))
+    .then(_ => gitAdd(gitFolder))
+    .then(_ => gitCommit(gitFolder))
+    .then(_ => gitPush(gitFolder))
+    .then(_ => {
+      res.send({
+        success: true
+      })
+    }).catch(error => {
+      console.log(`Error with cloning repo ${error}!`)
+      res.send({
+        success: false
+      })
+    })
 })
 
 app.listen(PORT, _ => {
