@@ -3,9 +3,11 @@ require('dotenv').config()
 const path = require('path')
 
 const { PORT, GIT_USER, GIT_PASS } = process.env
-const gitOutputPath = path.join(__dirname, '../git_output')
-const zipOutputPath = path.join(__dirname, '../zip_output')
-const fileInputPath = path.join(__dirname, '../inputs/')
+const rootPath = path.join(__dirname, '../')
+const gitOutputPath = path.join(rootPath, 'git_output')
+const zipOutputPath = path.join(rootPath, 'zip_output')
+const fileInputPath = path.join(rootPath, 'inputs')
+const logFilePath = path.join(rootPath, 'log.txt')
 
 module.exports = {
   port: PORT,
@@ -13,5 +15,6 @@ module.exports = {
   gitPass: GIT_PASS,
   gitOutputPath,
   zipOutputPath,
-  fileInputPath
+  fileInputPath,
+  logFilePath
 }

@@ -1,6 +1,9 @@
 const util = require('util')
 const exec = util.promisify(require('child_process').exec)
-const { gitUser, gitPass } = require('./config')
+const { gitUser, gitPass, logFilePath } = require('./config')
+const fs = require('fs')
+
+const appendFile = util.promisify(fs.appendFile)
 
 // helpers
 const transformUrl = url => {
@@ -20,6 +23,16 @@ const gitAdd = path => exec(`git add .`, { cwd: path })
 const gitCommit = path => exec(`git commit -m "server-update: update from server"`, { cwd: path })
 const gitPush = path => exec(`git push`, { cwd: path })
 
+// logs
+const log = message => appendFile(logFilePath, message, 'utf8')
+const makeLog = _ => {
+  const id = Math.random().toString().split('.')[1]
+  return message => {
+    const now = new Date().toISOString()
+    return log(`${id} | ${now} | ${message}\n`)
+  }
+}
+
 module.exports = {
   gitClone,
   emptyFolder,
@@ -28,5 +41,7 @@ module.exports = {
   gitFolderName,
   gitAdd,
   gitCommit,
-  gitPush
+  gitPush,
+  log,
+  makeLog
 }
