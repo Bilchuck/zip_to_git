@@ -1,6 +1,7 @@
 /* eslint-env mocha */
 const sinon = require('sinon')
 const mock = require('mock-require')
+const { CustomError } = require('../utils')
 
 const mockLog = sinon.stub()
 const mockUtils = {
@@ -13,7 +14,7 @@ const mockUtils = {
   gitAdd: sinon.stub(),
   gitPush: sinon.stub(),
   makeLog: sinon.stub(),
-  CustomError: () => ({})
+  CustomError
 }
 mockLog.resolves()
 mockUtils.gitClone.resolves()
@@ -70,6 +71,16 @@ describe('updateRepoController', _ => {
           mockLog,
           mockRes.send
         )
+        sinon.assert.calledWithMatch(mockRes.send, { success: true })
+        done()
+      })
+  })
+  it('should return message if CustomError was throwed', done => {
+    const errorMessage = 'abc'
+    mockUtils.gitPush.rejects(new CustomError(errorMessage))
+    updateRepoController(mockReq, mockRes)
+      .then(_ => {
+        sinon.assert.calledWithMatch(mockRes.send, { message: errorMessage, success: false })
         done()
       })
   })
