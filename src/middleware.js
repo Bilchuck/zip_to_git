@@ -1,7 +1,8 @@
+const { authToken: AUTH_TOKEN } = require('./config')
+
 const checkToken = (req, res, next) => {
-  const SECRET_TOKEN = process.env.TOKEN
-  const token = req.body.token
-  if (token === SECRET_TOKEN) {
+  const requestToken = req.body.token
+  if (requestToken === AUTH_TOKEN) {
     next()
   } else {
     res.send({
