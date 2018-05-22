@@ -10,7 +10,7 @@ const updateRepoController = (req, res) => {
   const unzipFolder = path.join(zipOutputPath, req.file.originalname.split('.zip')[0])
   const gitFolder = path.join(gitOutputPath, gitFolderName(req.body.gitUrl))
 
-  log(`Recieve zip archieve from ${req.body.project} project.`)
+  return log(`Recieve zip archieve from ${req.body.project} project.`)
     .then(_ => emptyFolder(gitOutputPath))
     .then(_ => emptyFolder(zipOutputPath))
     .then(_ => gitClone(req.body.gitUrl, gitOutputPath))
