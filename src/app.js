@@ -15,11 +15,12 @@ const {
   gitPush
 } = require('./utils')
 
+const { PORT } = process.env
 const gitOutputPath = path.join(__dirname, '../git_output')
 const zipOutputPath = path.join(__dirname, '../zip_output')
 const fileInputPath = path.join(__dirname, '../inputs/')
 
-var storage = multer.diskStorage({
+const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, fileInputPath)
   },
@@ -30,8 +31,6 @@ var storage = multer.diskStorage({
   }
 })
 const upload = multer({ storage })
-
-const { PORT } = process.env
 
 app.post('/project_name/', upload.single('zip'), checkToken, (req, res) => {
   const unzipFolder = path.join(zipOutputPath, req.file.originalname.split('.zip')[0])
