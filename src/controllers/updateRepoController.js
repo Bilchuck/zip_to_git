@@ -1,5 +1,6 @@
 const {
-  gitClone, emptyFolder, unzip, moveFiles, gitFolderName, gitCommit, gitAdd, gitPush, makeLog
+  gitClone, emptyFolder, unzip, moveFiles, gitFolderName,
+  gitCommit, gitAdd, gitPush, makeLog, CustomError
 } = require('../utils')
 const { gitOutputPath, zipOutputPath } = require('../config')
 const path = require('path')
@@ -19,17 +20,21 @@ const updateRepoController = (req, res) => {
     .then(_ => gitCommit(gitFolder))
     .then(_ => gitPush(gitFolder))
     .then(_ => log(`Success! Sending response..`))
-    .then(_ => {
-      res.send({
-        success: true
-      })
-    }).catch(error => {
-      log(`Error handled!`)
-      log(error)
-      res.send({
-        success: false
-      })
-    })
+    .then(_ => res.send({ success: true }))
+    // error handler
+    .catch(error => error instanceof CustomError
+      ? log(`Error handled!`)
+        .then(_ => log(error))
+        .then(_ => res.send({
+          message: error.message,
+          success: false
+        }))
+      : log(`Unexpected Error handled!`)
+        .then(_ => log(error))
+        .then(_ => res.send({
+          success: false
+        }))
+    )
 }
 
 module.exports = { updateRepoController }

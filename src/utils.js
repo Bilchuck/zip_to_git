@@ -11,6 +11,8 @@ const transformUrl = url => {
   const rest = url.split(https)[1]
   return `${https}${gitUser}:${gitPass}@${rest}`
 }
+const isNoChangesError = message => message.indexOf('nothing to commit, working tree clean') !== -1
+
 // file structure
 const emptyFolder = path => exec(`rm -rf *`, { cwd: path })
 const unzip = (input, out) => exec(`tar xvf ${input} -C ${out}`)
@@ -21,6 +23,9 @@ const gitClone = (gitUrl, path) => exec(`git clone ${transformUrl(gitUrl)}`, { c
 const gitFolderName = gitUrl => gitUrl.split(`/${gitUser}/`)[1].split('.git')[0]
 const gitAdd = path => exec(`git add .`, { cwd: path })
 const gitCommit = path => exec(`git commit -m "server-update: update from server"`, { cwd: path })
+  .catch(error => error.stdout && isNoChangesError(error.stdout)
+    ? Promise.reject(new CustomError(`No changes to commit`))
+    : Promise.reject(error))
 const gitPush = path => exec(`git push`, { cwd: path })
 
 // logs
@@ -33,6 +38,9 @@ const makeLog = _ => {
   }
 }
 
+// error
+class CustomError extends Error {}
+
 module.exports = {
   gitClone,
   emptyFolder,
@@ -43,5 +51,6 @@ module.exports = {
   gitCommit,
   gitPush,
   log,
-  makeLog
+  makeLog,
+  CustomError
 }

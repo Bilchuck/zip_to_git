@@ -6,7 +6,7 @@ const checkToken = (req, res, next) => {
   } else {
     res.send({
       success: false,
-      error: 'Token is not valid!'
+      message: 'Token is not valid!'
     })
   }
 }
