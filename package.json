@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon ./src/app.js --exec \"./node_modules/.bin/eslint ./src/*.js && nodemon ./src/app.js\"",
-    "start": "nodemon ./src/app"
+    "start": "nodemon ./src/app",
+    "test": "./node_modules/.bin/eslint ./src/*.js"
   },
   "author": "",
   "license": "ISC",
