@@ -2,7 +2,7 @@
 require('dotenv').config()
 const path = require('path')
 
-const { PORT, GIT_USER, GIT_PASS, AUTH_TOKEN } = process.env
+const { PORT, GIT_USER, GIT_PASS, AUTH_TOKEN, ADIDAS_GIT_URL } = process.env
 const rootPath = path.join(__dirname, '../')
 const gitOutputPath = path.join(rootPath, 'git_output')
 const zipOutputPath = path.join(rootPath, 'zip_output')
@@ -17,5 +17,6 @@ module.exports = {
   gitOutputPath,
   zipOutputPath,
   fileInputPath,
-  logFilePath
+  logFilePath,
+  adidasGitUrl: ADIDAS_GIT_URL
 }

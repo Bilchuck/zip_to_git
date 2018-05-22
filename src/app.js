@@ -2,7 +2,7 @@ const express = require('express')
 const { checkToken } = require('./middleware')
 const multer = require('multer')
 const { port, fileInputPath } = require('./config')
-const { updateRepoController } = require('./controllers')
+const { UpdateAdidasRepoController } = require('./controllers')
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -18,7 +18,8 @@ const upload = multer({ storage })
 const app = express()
 
 // api
-app.post('/project_name/', upload.single('zip'), checkToken, updateRepoController)
+const adidasUploadController = new UpdateAdidasRepoController()
+app.post('/adidas/', upload.single('zip'), checkToken, adidasUploadController.run.bind(adidasUploadController))
 
 // start server
 app.listen(port, _ => {

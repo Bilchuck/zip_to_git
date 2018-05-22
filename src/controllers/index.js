@@ -1,5 +1,5 @@
-const { updateRepoController } = require('./updateRepoController')
+const UpdateAdidasRepoController = require('./updateAdidasRepoController')
 
 module.exports = {
-  updateRepoController
+  UpdateAdidasRepoController
 }
